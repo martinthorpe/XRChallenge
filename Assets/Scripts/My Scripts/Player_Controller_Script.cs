@@ -20,6 +20,7 @@ public class Player_Controller_Script : MonoBehaviour
     private Vector2 m_VMove;
     private bool m_bIsMoving;
     private bool m_bIsJumping;
+    private bool m_bIsGrounded;
     [SerializeField] private IsGrounded_Script m_Grounded;
 
     private void OnEnable()
@@ -27,8 +28,8 @@ public class Player_Controller_Script : MonoBehaviour
         m_Input.currentActionMap.FindAction("Move").performed += Handle_MovePerformed;
         m_Input.currentActionMap.FindAction("Move").canceled += Handle_MoveCancelled;
         m_Input.currentActionMap.FindAction("Jump").performed += Handle_JumpPerformed;
-        m_Grounded.GetComponent<Grounded>().OnHitGround += HitGround;
-        m_Grounded.GetComponent<Grounded>().OnLeftGround += LeftGround;
+        m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround += HitGround;
+        m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
     }
 
     private void OnDisable()
@@ -36,8 +37,8 @@ public class Player_Controller_Script : MonoBehaviour
         m_Input.currentActionMap.FindAction("Move").performed -= Handle_MovePerformed;
         m_Input.currentActionMap.FindAction("Move").canceled -= Handle_MoveCancelled;
         m_Input.currentActionMap.FindAction("Jump").performed -= Handle_JumpPerformed;
-        m_Grounded.GetComponent<Grounded>().OnHitGround -= HitGround;
-        m_Grounded.GetComponent<Grounded>().OnLeftGround -= LeftGround;
+        m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround -= HitGround;
+        m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround -= LeftGround;
     }
 
     private void Awake()
@@ -90,7 +91,7 @@ public class Player_Controller_Script : MonoBehaviour
 
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
-        if (!m_bIsJumping)
+        if (!m_bIsJumping && m_bIsGrounded)
         {
             m_RB.velocity = new Vector3(0.0f, m_fJumpForce, 0.0f);
             m_bIsJumping = true;
@@ -106,13 +107,22 @@ public class Player_Controller_Script : MonoBehaviour
         }
     }
 
-    public void OnHitGround()
+    public void HitGround()
     {
-
+        m_bIsGrounded = true;
+        m_bIsJumping = false;
     }
 
     public void LeftGround()
     {
+        m_bIsGrounded = false;
+    }
 
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.TryGetComponent<Pickup>(out Pickup pick))
+        {
+            int lol = collider.gameObject.GetComponent<Pickup>().GetPickedUp();
+        }
     }
 }
