@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(CapsuleCollider))]
 public class IsGrounded_Script : MonoBehaviour
 {
     public event Action OnHitGround;

@@ -11,7 +11,6 @@ public class Game_Manager_Script : MonoBehaviour
 
     private void OnEnable()
     {
-        print("l");
         m_StarList.OnPickUp += PickedUpStar;
     }
 
@@ -32,6 +31,12 @@ public class Game_Manager_Script : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+
+        
+    }
+
     private void UpdateTimer()
     {
 
@@ -47,7 +52,7 @@ public class Game_Manager_Script : MonoBehaviour
 
     }
 
-    private void PickedUpStar(Pickup pu)
+    private void PickedUpStar(Pickup up)
     {
         m_iStarCount--;
         print(m_iStarCount);
