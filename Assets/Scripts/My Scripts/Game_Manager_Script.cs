@@ -6,6 +6,7 @@ using UnityEngine;
 public class Game_Manager_Script : MonoBehaviour
 {
     [SerializeField] private GameObject m_GOTimerUI;
+    [SerializeField] private Score_UI_Script m_GOScoreUI;
     [SerializeField] private GameObject m_GOStarPickup;
     [SerializeField] private Transform m_tStarSpawn;
     [SerializeField] private List<Pickup> m_StarList;
@@ -26,6 +27,10 @@ public class Game_Manager_Script : MonoBehaviour
     {
         m_StarList = new List<Pickup>();
         m_bHasSetUpLinks = false;
+        if (m_GOScoreUI != null)
+        {
+            m_GOScoreUI.InIt();
+        }
     }
 
     private void Update()
@@ -67,7 +72,10 @@ public class Game_Manager_Script : MonoBehaviour
     {
         m_iStarCount--;
         print(m_iStarCount);
-        print(up.ScoreValue);
+        if (m_GOScoreUI != null)
+        {
+            m_GOScoreUI.ChangeText(up.ScoreValue.ToString());
+        }
     }
 
     public void EnteredFinishedArea()
