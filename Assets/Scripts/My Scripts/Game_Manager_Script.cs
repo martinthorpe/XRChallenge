@@ -17,11 +17,6 @@ public class Game_Manager_Script : MonoBehaviour
     private int m_iStarCount;
     private int m_iPlayerScore;
 
-    private void OnEnable()
-    {
-        
-    }
-
     private void OnDisable()
     {
         m_StarList[0].OnPickUp -= PickedUpStar;

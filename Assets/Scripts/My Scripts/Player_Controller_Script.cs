@@ -14,6 +14,7 @@ public class Player_Controller_Script : MonoBehaviour
     private PlayerInput m_Input;
     private Rigidbody m_RB;
     public event Action Death;
+    [SerializeField] private Slider_UI_Script m_sHealthSlider;
     [SerializeField] private float m_fSpeed;
     [SerializeField] private float m_fJumpForce;
     private Coroutine m_CRMove;
@@ -22,10 +23,6 @@ public class Player_Controller_Script : MonoBehaviour
     private bool m_bIsJumping;
     private bool m_bIsGrounded;
     [SerializeField] private IsGrounded_Script m_Grounded;
-
-    private void OnEnable()
-    {
-    }
 
     private void OnDisable()
     {
@@ -45,6 +42,13 @@ public class Player_Controller_Script : MonoBehaviour
         m_VMove = new Vector2(0.0f, 0.0f);
         m_bIsMoving = false;
         m_bIsJumping = false;
+        m_fMaxHealth = 100.0f;
+        m_fCurrentHealth = m_fMaxHealth;
+
+        if (m_sHealthSlider != null)
+        {
+            m_sHealthSlider.InIt(GetHealth() / 100.0f);
+        }
 
         m_Input.currentActionMap.FindAction("Move").performed += Handle_MovePerformed;
         m_Input.currentActionMap.FindAction("Move").canceled += Handle_MoveCancelled;
@@ -53,19 +57,20 @@ public class Player_Controller_Script : MonoBehaviour
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
     }
 
-    public void GetHealth()
-    {
-
-    }
-
-    public float SetHealth()
+    public float GetHealth()
     {
         return m_fCurrentHealth;
     }
 
+    public void ChangeHealth(float newValue)
+    {
+        m_fCurrentHealth += newValue;
+        UpdateHealthUI();
+    }
+
     private void UpdateHealthUI()
     {
-
+        m_sHealthSlider.ChangeValue(GetHealth() / 100.0f);
     }
 
     private void Handle_MovePerformed(InputAction.CallbackContext context)
