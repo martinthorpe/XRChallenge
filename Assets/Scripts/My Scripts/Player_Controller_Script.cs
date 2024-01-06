@@ -25,11 +25,6 @@ public class Player_Controller_Script : MonoBehaviour
 
     private void OnEnable()
     {
-        m_Input.currentActionMap.FindAction("Move").performed += Handle_MovePerformed;
-        m_Input.currentActionMap.FindAction("Move").canceled += Handle_MoveCancelled;
-        m_Input.currentActionMap.FindAction("Jump").performed += Handle_JumpPerformed;
-        m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround += HitGround;
-        m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
     }
 
     private void OnDisable()
@@ -41,7 +36,7 @@ public class Player_Controller_Script : MonoBehaviour
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround -= LeftGround;
     }
 
-    private void Awake()
+    public void InIt()
     {
         m_Input = GetComponent<PlayerInput>();
         m_RB = GetComponent<Rigidbody>();
@@ -50,6 +45,12 @@ public class Player_Controller_Script : MonoBehaviour
         m_VMove = new Vector2(0.0f, 0.0f);
         m_bIsMoving = false;
         m_bIsJumping = false;
+
+        m_Input.currentActionMap.FindAction("Move").performed += Handle_MovePerformed;
+        m_Input.currentActionMap.FindAction("Move").canceled += Handle_MoveCancelled;
+        m_Input.currentActionMap.FindAction("Jump").performed += Handle_JumpPerformed;
+        m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround += HitGround;
+        m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
     }
 
     public void GetHealth()
