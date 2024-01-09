@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,12 +8,8 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CapsuleCollider))]
 public class Player_Controller_Script : MonoBehaviour
 {
-    [SerializeField] private float m_fMaxHealth;
-    private float m_fCurrentHealth;
     private PlayerInput m_Input;
     private Rigidbody m_RB;
-    public event Action Death;
-    [SerializeField] private Slider_UI_Script m_sHealthSlider;
     [SerializeField] private float m_fSpeed;
     [SerializeField] private float m_fJumpForce;
     private Coroutine m_CRMove;
@@ -42,35 +37,12 @@ public class Player_Controller_Script : MonoBehaviour
         m_VMove = new Vector2(0.0f, 0.0f);
         m_bIsMoving = false;
         m_bIsJumping = false;
-        m_fMaxHealth = 100.0f;
-        m_fCurrentHealth = m_fMaxHealth;
-
-        if (m_sHealthSlider != null)
-        {
-            m_sHealthSlider.InIt(GetHealth() / 100.0f);
-        }
 
         m_Input.currentActionMap.FindAction("Move").performed += Handle_MovePerformed;
         m_Input.currentActionMap.FindAction("Move").canceled += Handle_MoveCancelled;
         m_Input.currentActionMap.FindAction("Jump").performed += Handle_JumpPerformed;
         m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround += HitGround;
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
-    }
-
-    public float GetHealth()
-    {
-        return m_fCurrentHealth;
-    }
-
-    public void ChangeHealth(float newValue)
-    {
-        m_fCurrentHealth += newValue;
-        UpdateHealthUI();
-    }
-
-    private void UpdateHealthUI()
-    {
-        m_sHealthSlider.ChangeValue(GetHealth() / 100.0f);
     }
 
     private void Handle_MovePerformed(InputAction.CallbackContext context)
@@ -122,13 +94,5 @@ public class Player_Controller_Script : MonoBehaviour
     public void LeftGround()
     {
         m_bIsGrounded = false;
-    }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-        if (collider.gameObject.TryGetComponent<Pickup>(out Pickup pick))
-        {
-            int lol = collider.gameObject.GetComponent<Pickup>().GetPickedUp();
-        }
     }
 }

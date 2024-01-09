@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 [RequireComponent(typeof(TextMesh))]
-public class Score_UI_Script : MonoBehaviour
+public class UI_Text_Script : MonoBehaviour
 {
     private TextMeshProUGUI m_Text;
 
@@ -17,6 +17,6 @@ public class Score_UI_Script : MonoBehaviour
 
     public void ChangeText(string score)
     {
-        m_Text.text = "SCORE: " + score;
+        m_Text.text = score;
     }
 }
