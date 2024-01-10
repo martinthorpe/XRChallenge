@@ -2,17 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.IO;
+using System.Linq;
 
+
+[RequireComponent(typeof(Map_Generator_Script))]
 public class Game_Manager_Script : MonoBehaviour
 {
     [SerializeField] private UI_Text_Script m_GOTimerUI;
     [SerializeField] private UI_Text_Script m_GOScoreUI;
-    [SerializeField] private GameObject m_GOPlayerPrefab;
-    [SerializeField] private GameObject m_GOStarPickupPrefab;
-    [SerializeField] private GameObject m_GOFinishedAreaPrefab;
-    [SerializeField] private Transform m_tPlayerSpawn;
-    [SerializeField] private Transform m_tStarSpawn;
-    [SerializeField] private Transform m_tFinishedAreaSpawn;
+    private Map_Generator_Script m_Map_Generator;
     private Player_Manager_Script m_GOPlayerCharacter;
     private Finished_Area_Script m_GOFinishedArea;
     private List<Pickup> m_StarList;
@@ -20,6 +20,7 @@ public class Game_Manager_Script : MonoBehaviour
     private int m_iStarCount;
     private int m_iPlayerScore;
     private float m_fTimer;
+    private int[] m_aMapArray;
 
     private void OnDisable()
     {
@@ -33,6 +34,7 @@ public class Game_Manager_Script : MonoBehaviour
 
     private void Awake()
     {
+        m_Map_Generator = GetComponent<Map_Generator_Script>();
         m_StarList = new List<Pickup>();
         m_bHasSetUpLinks = false;
         m_fTimer = 0.0f;
@@ -58,8 +60,32 @@ public class Game_Manager_Script : MonoBehaviour
 
     private void Start()
     {
-        BuildMap();
+        SetUpLevel();
         m_iStarCount = m_StarList.Count;
+    }
+
+    private void SetUpLevel()
+    {
+        List<GameObject> listOfGameObjects = m_Map_Generator.BuildMap();
+        for (int i = 0; i < listOfGameObjects.Count; i++)
+        {
+            if (listOfGameObjects[i].TryGetComponent<Pickup>(out Pickup star))
+            {
+                m_StarList.Add(star.GetComponent<Pickup>());
+            }
+            else if (listOfGameObjects[i].TryGetComponent<Player_Manager_Script>(out Player_Manager_Script player))
+            {
+                m_GOPlayerCharacter = player.GetComponent<Player_Manager_Script>();
+                m_GOPlayerCharacter.InIt();
+                m_GOPlayerCharacter.Death += SpawnPlayer;
+            }
+            else if (listOfGameObjects[i].TryGetComponent<Finished_Area_Script>(out Finished_Area_Script finishedArea))
+            {
+                m_GOFinishedArea = finishedArea.GetComponent<Finished_Area_Script>();
+                m_GOFinishedArea.InIt(false);
+                m_GOFinishedArea.EnteredArea += EnteredFinishedArea;
+            }
+        }
     }
 
     private void UpdateTimer()
@@ -76,29 +102,6 @@ public class Game_Manager_Script : MonoBehaviour
         }
     }
 
-    private void BuildMap()
-    {
-        m_StarList.Add(Instantiate(m_GOStarPickupPrefab, m_tStarSpawn).GetComponent<Pickup>());
-        m_StarList[0].gameObject.transform.parent = null;
-        m_GOFinishedArea = (Instantiate(m_GOFinishedAreaPrefab, m_tFinishedAreaSpawn)).GetComponent<Finished_Area_Script>();
-        m_GOFinishedArea.gameObject.transform.parent = null;
-        m_GOFinishedArea.InIt(false);
-        m_GOFinishedArea.EnteredArea += EnteredFinishedArea;
-        SpawnPlayer();
-    }
-
-    private void SpawnPlayer()
-    {
-        if (m_GOPlayerCharacter != null)
-        {
-            Destroy(m_GOPlayerCharacter.gameObject);
-        }
-        m_GOPlayerCharacter = Instantiate(m_GOPlayerPrefab, m_tPlayerSpawn).GetComponent<Player_Manager_Script>();
-        m_GOPlayerCharacter.gameObject.transform.parent = null;
-        m_GOPlayerCharacter.InIt();
-        m_GOPlayerCharacter.Death += SpawnPlayer;
-    }
-
     private void PickedUpStar(Pickup up)
     {
         m_iStarCount--;
@@ -113,8 +116,16 @@ public class Game_Manager_Script : MonoBehaviour
         }
     }
 
+    private void SpawnPlayer()
+    {
+        if (m_GOPlayerCharacter != null)
+        {
+            Destroy(m_GOPlayerCharacter.gameObject);
+        }
+    }
+
     private void EnteredFinishedArea()
     {
-        print("LOL");
+        SceneManager.LoadScene(0);
     }
 }
