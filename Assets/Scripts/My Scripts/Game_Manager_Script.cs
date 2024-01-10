@@ -9,10 +9,12 @@ public class Game_Manager_Script : MonoBehaviour
     [SerializeField] private UI_Text_Script m_GOScoreUI;
     [SerializeField] private GameObject m_GOPlayerPrefab;
     [SerializeField] private GameObject m_GOStarPickupPrefab;
+    [SerializeField] private GameObject m_GOFinishedAreaPrefab;
     [SerializeField] private Transform m_tPlayerSpawn;
     [SerializeField] private Transform m_tStarSpawn;
+    [SerializeField] private Transform m_tFinishedAreaSpawn;
     private Player_Manager_Script m_GOPlayerCharacter;
-    [SerializeField] private Finished_Area_Script m_GOFinishedArea;
+    private Finished_Area_Script m_GOFinishedArea;
     private List<Pickup> m_StarList;
     private bool m_bHasSetUpLinks;
     private int m_iStarCount;
@@ -41,11 +43,6 @@ public class Game_Manager_Script : MonoBehaviour
         if (m_GOScoreUI != null)
         {
             m_GOScoreUI.InIt("SCORE: 0");
-        }
-        if (m_GOFinishedArea != null)
-        {
-            m_GOFinishedArea.InIt(false);
-            m_GOFinishedArea.EnteredArea += EnteredFinishedArea;
         }
     }
 
@@ -83,6 +80,10 @@ public class Game_Manager_Script : MonoBehaviour
     {
         m_StarList.Add(Instantiate(m_GOStarPickupPrefab, m_tStarSpawn).GetComponent<Pickup>());
         m_StarList[0].gameObject.transform.parent = null;
+        m_GOFinishedArea = (Instantiate(m_GOFinishedAreaPrefab, m_tFinishedAreaSpawn)).GetComponent<Finished_Area_Script>();
+        m_GOFinishedArea.gameObject.transform.parent = null;
+        m_GOFinishedArea.InIt(false);
+        m_GOFinishedArea.EnteredArea += EnteredFinishedArea;
         SpawnPlayer();
     }
 
