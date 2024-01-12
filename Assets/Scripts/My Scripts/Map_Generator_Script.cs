@@ -13,12 +13,12 @@ public class Map_Generator_Script : MonoBehaviour
     [SerializeField] private GameObject m_GOHealthPotionPrefab;
     [SerializeField] private GameObject m_GOHazardPrefab;
     [SerializeField] private Vector3 m_vPlayerSpawn;
+    [SerializeField] private int m_iSizeLimit = 10;
 
 
     public List<GameObject> BuildMap()
     {
         List<GameObject> listOfGameObejcts = new List<GameObject>();
-        int sizeLimit = 10;
         string path = Application.dataPath + "/Map.txt";
         List<string> fileLines = File.ReadAllLines(path).ToList();
         if (!CheckMapIsValid(fileLines))
@@ -28,38 +28,36 @@ public class Map_Generator_Script : MonoBehaviour
         }
         for (int i = 0; i < fileLines.Count; i++)
         {
-            if (sizeLimit == i)
+            if (m_iSizeLimit == i)
             {
                 break;
             }
             for (int x = 0; x < fileLines[i].Length; x++)
             {
-                if (sizeLimit == x)
+                if (m_iSizeLimit == x)
                 {
                     break;
                 }
+                Vector3 pos = new Vector3((i - m_iSizeLimit / 2.0f) + 0.5f, 0.5f, (x - m_iSizeLimit / 2.0f) + 0.5f);
                 switch (fileLines[i][x])
                 {
                     case '1':
-                        listOfGameObejcts.Add(Instantiate(m_GOWallPrefab));
-                        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3((i - 5.0f) + 0.5f, 0.5f, (x - 5.0f) + 0.5f);
+                        listOfGameObejcts.Add(SpawnObject(m_GOWallPrefab, pos));
                         break;
                     case '2':
-                        listOfGameObejcts.Add(Instantiate(m_GOStarPickupPrefab));
-                        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3((i - 5.0f) + 0.5f, 0.5f, (x - 5.0f) + 0.5f);
+                        listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, pos));
                         break;
                     case '3':
-                        Instantiate(m_GOHealthPotionPrefab).transform.position = new Vector3((i - 5.0f) + 0.5f, 0.5f, (x - 5.0f) + 0.5f);
+                        SpawnObject(m_GOHealthPotionPrefab, pos);
                         break;
                     case '4':
-                        Instantiate(m_GOHazardPrefab).transform.position = new Vector3((i - 5.0f) + 0.5f, 0.5f, (x - 5.0f) + 0.5f);
+                        SpawnObject(m_GOHazardPrefab, pos);
                         break;
                     case '5':
-                        listOfGameObejcts.Add(Instantiate(m_GOFinishedAreaPrefab));
-                        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3((i - 5.0f) + 0.5f, 0.5f, (x - 5.0f) + 0.5f);
+                        listOfGameObejcts.Add(SpawnObject(m_GOFinishedAreaPrefab, pos));
                         break;
                     case '6':
-                        m_vPlayerSpawn = new Vector3((i - 5.0f) + 0.5f, 0.5f, (x - 5.0f) + 0.5f);
+                        m_vPlayerSpawn = pos;
                         listOfGameObejcts.Add(SpawnPlayer());
                         break;
                 }
@@ -101,43 +99,43 @@ public class Map_Generator_Script : MonoBehaviour
     private List<GameObject> SpawnDefaultMap()
     {
         List<GameObject> listOfGameObejcts = new List<GameObject>();
+
         m_vPlayerSpawn = new Vector3(0.0f, 0.5f, 0.0f);
         listOfGameObejcts.Add(SpawnPlayer());
-        listOfGameObejcts.Add(Instantiate(m_GOFinishedAreaPrefab));
-        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3(3.5f, 0.5f, 3.5f);
-        listOfGameObejcts.Add(Instantiate(m_GOStarPickupPrefab));
-        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3(-1.5f, 0.5f, -3.5f);
-        listOfGameObejcts.Add(Instantiate(m_GOStarPickupPrefab));
-        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3(-2.5f, 0.5f, 3.5f);
-        listOfGameObejcts.Add(Instantiate(m_GOStarPickupPrefab));
-        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3(0.5f, 0.5f, 1.5f);
-        listOfGameObejcts.Add(Instantiate(m_GOStarPickupPrefab));
-        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3(3.5f, 0.5f, 2.5f);
-        listOfGameObejcts.Add(Instantiate(m_GOStarPickupPrefab));
-        listOfGameObejcts[listOfGameObejcts.Count - 1].transform.position = new Vector3(-2.5f, 0.5f, -3.5f);
+        listOfGameObejcts.Add(SpawnObject(m_GOFinishedAreaPrefab, new Vector3(3.5f, 0.5f, 3.5f)));
+        listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, new Vector3(-1.5f, 0.5f, -3.5f)));
+        listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, new Vector3(-2.5f, 0.5f, 3.5f)));
+        listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, new Vector3(0.5f, 0.5f, 1.5f)));
+        listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, new Vector3(3.5f, 0.5f, 2.5f)));
+        listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, new Vector3(-2.5f, 0.5f, -3.5f)));
         for (float x = -4.5f; x <= 4.5f; x++)
         {
-            Instantiate(m_GOWallPrefab).transform.position = new Vector3(x, 0.5f, -4.5f);
+            SpawnObject(m_GOWallPrefab, new Vector3(x, 0.5f, -4.5f));
         }
         for (float x = -4.5f; x <= 4.5f; x++)
         {
-            Instantiate(m_GOWallPrefab).transform.position = new Vector3(x, 0.5f, 4.5f);
+            SpawnObject(m_GOWallPrefab, new Vector3(x, 0.5f, 4.5f));
         }
         for (float y = -4.5f; y <= 4.5f; y++)
         {
-            Instantiate(m_GOWallPrefab).transform.position = new Vector3(-4.5f, 0.5f, y);
+            SpawnObject(m_GOWallPrefab, new Vector3(-4.5f, 0.5f, y));
         }
         for (float y = -4.5f; y <= 4.5f; y++)
         {
-            Instantiate(m_GOWallPrefab).transform.position = new Vector3(4.5f, 0.5f, y);
+            SpawnObject(m_GOWallPrefab, new Vector3(4.5f, 0.5f, y));
         }
         return listOfGameObejcts;
     }
 
+    private GameObject SpawnObject(GameObject prefab, Vector3 pos)
+    {
+        GameObject go = Instantiate(prefab);
+        go.transform.position = pos;
+        return go;
+    }
+
     public GameObject SpawnPlayer()
     {
-        GameObject player = Instantiate(m_GOPlayerPrefab);
-        player.transform.position = m_vPlayerSpawn;
-        return player;
+        return SpawnObject(m_GOPlayerPrefab, m_vPlayerSpawn);
     }
 }
