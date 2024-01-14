@@ -83,6 +83,7 @@ public class Game_Manager_Script : MonoBehaviour
     }
 
     /// <summary>
+    /// Gets the map layout from the Map Text Document.
     /// Calls Map Generators BuildMap function and returns with objects in the game world within a list.
     /// Looping through that list checks if any has one of these scripts to figure out what it is.
     /// If it is a Star Pickup; adds it to StarList.
@@ -91,7 +92,8 @@ public class Game_Manager_Script : MonoBehaviour
     /// </summary>
     private void SetUpLevel()
     {
-        List<GameObject> listOfGameObjects = m_Map_Generator.BuildMap();
+        string path = Application.dataPath + "/Map.txt";
+        List<GameObject> listOfGameObjects = m_Map_Generator.BuildMap(File.ReadAllLines(path).ToList());
         for (int i = 0; i < listOfGameObjects.Count; i++)
         {
             if (listOfGameObjects[i].TryGetComponent<Pickup>(out Pickup star))
@@ -159,6 +161,7 @@ public class Game_Manager_Script : MonoBehaviour
 
     /// <summary>
     /// If Player Character isn't null then destroys it.
+    /// Spawns the Player and sets it to Player Character, calls its InIt function and assigns it Death event to SpawnPlayer function.
     /// </summary>
     private void SpawnPlayer()
     {
@@ -166,6 +169,9 @@ public class Game_Manager_Script : MonoBehaviour
         {
             Destroy(m_GOPlayerCharacter.gameObject);
         }
+        m_GOPlayerCharacter = (m_Map_Generator.SpawnPlayer()).GetComponent<Player_Manager_Script>();
+        m_GOPlayerCharacter.InIt();
+        m_GOPlayerCharacter.Death += SpawnPlayer;
     }
 
     /// <summary>

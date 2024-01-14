@@ -17,34 +17,23 @@ public class Map_Generator_Script : MonoBehaviour
     [SerializeField] private Vector3 m_vPlayerSpawn;
 
     /// <summary>
-    /// Gets the map layout from the Map Text Document.
-    /// If it isn't valid then returns the default map.
+    /// Checks if the map is valid. If it isn't valid then it returns the default map.
     /// For each element it checks what the number is and spawns a certain prefab.
     /// Adding them to a list if they're either; star pickup, finished area, or player spawn.
     /// On Each row or column counting and stopping if incase it passes the maps physical limits.
     /// </summary>
     /// <returns>The list of game objects in the world.</returns>
-    public List<GameObject> BuildMap()
+    public List<GameObject> BuildMap(List<string> fileLines)
     {
         List<GameObject> listOfGameObejcts = new List<GameObject>();
-        string path = Application.dataPath + "/Map.txt";
-        List<string> fileLines = File.ReadAllLines(path).ToList();
         if (!CheckMapIsValid(fileLines))
         {
             return SpawnDefaultMap();
         }
-        for (int i = 0; i < fileLines.Count; i++)
+        for (int i = 0; i < fileLines.Count || i < m_iSizeLimit; i++)
         {
-            if (m_iSizeLimit == i)
+            for (int x = 0; x < fileLines[i].Length || x < m_iSizeLimit; x++)
             {
-                break;
-            }
-            for (int x = 0; x < fileLines[i].Length; x++)
-            {
-                if (m_iSizeLimit == x)
-                {
-                    break;
-                }
                 Vector3 pos = new Vector3((i - m_iSizeLimit / 2.0f) + 0.5f, 0.5f, (x - m_iSizeLimit / 2.0f) + 0.5f);
                 switch (fileLines[i][x])
                 {
@@ -80,8 +69,8 @@ public class Map_Generator_Script : MonoBehaviour
     private bool CheckMapIsValid(List<string> fileLines)
     {
         int starCount = 0;
-        int hasPlayerSpawn = 0;
-        int hasFinishArea = 0;
+        bool hasPlayerSpawn = false;
+        bool hasFinishArea = false;
         for (int i = 0; i < fileLines.Count; i++)
         {
             for (int x = 0; x < fileLines[i].Length; x++)
@@ -92,15 +81,23 @@ public class Map_Generator_Script : MonoBehaviour
                         starCount++;
                         break;
                     case '5':
-                        hasFinishArea++;
+                        if (hasFinishArea)
+                        {
+                            return false;
+                        }
+                        hasFinishArea = true;
                         break;
                     case '6':
-                        hasPlayerSpawn++;
+                        if (hasPlayerSpawn)
+                        {
+                            return false;
+                        }
+                        hasPlayerSpawn = true;
                         break;
                 }
             }
         }
-        if (starCount < 5 || hasPlayerSpawn != 1 || hasFinishArea != 1)
+        if (starCount < 5 || !hasPlayerSpawn || !hasFinishArea)
         {
             return false;
         }
