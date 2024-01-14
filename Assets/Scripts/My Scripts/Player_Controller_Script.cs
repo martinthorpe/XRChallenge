@@ -8,17 +8,24 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CapsuleCollider))]
 public class Player_Controller_Script : MonoBehaviour
 {
-    private PlayerInput m_Input;
-    private Rigidbody m_RB;
+    [Header("Config")]
     [SerializeField] private float m_fSpeed;
     [SerializeField] private float m_fJumpForce;
+
+    [Header("References")]
+    [SerializeField] private IsGrounded_Script m_Grounded;
+    private PlayerInput m_Input;
+    private Rigidbody m_RB;
+
     private Coroutine m_CRMove;
     private Vector2 m_VMove;
     private bool m_bIsMoving;
     private bool m_bIsJumping;
     private bool m_bIsGrounded;
-    [SerializeField] private IsGrounded_Script m_Grounded;
 
+    /// <summary>
+    /// Removes the connection to the Input Actions and Ground Script events to functions in this script.
+    /// </summary>
     private void OnDisable()
     {
         m_Input.currentActionMap.FindAction("Move").performed -= Handle_MovePerformed;
@@ -28,6 +35,11 @@ public class Player_Controller_Script : MonoBehaviour
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround -= LeftGround;
     }
 
+    /// <summary>
+    /// Gets Input and Rigidbody components.
+    /// Resets varibles.
+    /// Assigns the connections of the Input Actions and Ground Script events to functions in this script.
+    /// </summary>
     public void InIt()
     {
         m_Input = GetComponent<PlayerInput>();
@@ -45,6 +57,10 @@ public class Player_Controller_Script : MonoBehaviour
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
     }
 
+    /// <summary>
+    /// Sets the context value being passed to the move vector2 value and moving varible to true.
+    /// Starts the move coroutine.
+    /// </summary>
     private void Handle_MovePerformed(InputAction.CallbackContext context)
     {
         m_VMove = context.ReadValue<Vector2>();
@@ -55,6 +71,10 @@ public class Player_Controller_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the context value being passed to the Move vector2 value and sets Is Moving to false.
+    /// Checks if coroutine is active, which if it is it stops.
+    /// </summary>
     private void Handle_MoveCancelled(InputAction.CallbackContext context)
     {
         m_VMove = context.ReadValue<Vector2>();
@@ -67,6 +87,9 @@ public class Player_Controller_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if isn't already jumping and is grounded, if so then applies force upwards and sets Is Jumping to true.
+    /// </summary>
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
         if (!m_bIsJumping && m_bIsGrounded)
@@ -76,6 +99,9 @@ public class Player_Controller_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// While Is Moving is true, then sets the rigidbody attached to the player velocity a new value using the Move and Speed varibles.
+    /// </summary>
     private IEnumerator C_MoveUpdate()
     {
         while (m_bIsMoving)
@@ -85,12 +111,18 @@ public class Player_Controller_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets Is Grounded to true and sets Is Jumping to false when hit the ground. 
+    /// </summary>
     public void HitGround()
     {
         m_bIsGrounded = true;
         m_bIsJumping = false;
     }
 
+    /// <summary>
+    /// Sets Is Grounded to false when left the ground.
+    /// </summary>
     public void LeftGround()
     {
         m_bIsGrounded = false;

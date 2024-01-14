@@ -9,12 +9,18 @@ public class UI_Text_Script : MonoBehaviour
 {
     private TextMeshProUGUI m_Text;
 
+    /// <summary>
+    /// Gets the Text component and sets it to the passed value.
+    /// </summary>
     public void InIt(string startText)
     {
         m_Text = gameObject.GetComponent<TextMeshProUGUI>();
-        m_Text.text = startText;
+        ChangeText(startText);
     }
 
+    /// <summary>
+    /// Changes Text to passed value.
+    /// </summary>
     public void ChangeText(string score)
     {
         m_Text.text = score;

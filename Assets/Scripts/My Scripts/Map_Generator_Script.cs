@@ -6,6 +6,8 @@ using System.Linq;
 
 public class Map_Generator_Script : MonoBehaviour
 {
+    [Header("Config")]
+    [SerializeField] private int m_iSizeLimit = 10;
     [SerializeField] private GameObject m_GOPlayerPrefab;
     [SerializeField] private GameObject m_GOStarPickupPrefab;
     [SerializeField] private GameObject m_GOFinishedAreaPrefab;
@@ -13,9 +15,15 @@ public class Map_Generator_Script : MonoBehaviour
     [SerializeField] private GameObject m_GOHealthPotionPrefab;
     [SerializeField] private GameObject m_GOHazardPrefab;
     [SerializeField] private Vector3 m_vPlayerSpawn;
-    [SerializeField] private int m_iSizeLimit = 10;
 
-
+    /// <summary>
+    /// Gets the map layout from the Map Text Document.
+    /// If it isn't valid then returns the default map.
+    /// For each element it checks what the number is and spawns a certain prefab.
+    /// Adding them to a list if they're either; star pickup, finished area, or player spawn.
+    /// On Each row or column counting and stopping if incase it passes the maps physical limits.
+    /// </summary>
+    /// <returns>The list of game objects in the world.</returns>
     public List<GameObject> BuildMap()
     {
         List<GameObject> listOfGameObejcts = new List<GameObject>();
@@ -24,7 +32,6 @@ public class Map_Generator_Script : MonoBehaviour
         if (!CheckMapIsValid(fileLines))
         {
             return SpawnDefaultMap();
-            
         }
         for (int i = 0; i < fileLines.Count; i++)
         {
@@ -42,7 +49,7 @@ public class Map_Generator_Script : MonoBehaviour
                 switch (fileLines[i][x])
                 {
                     case '1':
-                        listOfGameObejcts.Add(SpawnObject(m_GOWallPrefab, pos));
+                        SpawnObject(m_GOWallPrefab, pos);
                         break;
                     case '2':
                         listOfGameObejcts.Add(SpawnObject(m_GOStarPickupPrefab, pos));
@@ -66,6 +73,10 @@ public class Map_Generator_Script : MonoBehaviour
         return listOfGameObejcts;
     }
 
+    /// <summary>
+    /// Checks if the list it was passed contains at least 5 stars and only one player spawn and one finished area.
+    /// </summary>
+    /// <returns>True if the map is valid, and false if it isn't.</returns>
     private bool CheckMapIsValid(List<string> fileLines)
     {
         int starCount = 0;
@@ -96,6 +107,10 @@ public class Map_Generator_Script : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Spawns the player, finished area, star pickups, and the walls.
+    /// </summary>
+    /// <returns>The list of objects in the map.</returns>
     private List<GameObject> SpawnDefaultMap()
     {
         List<GameObject> listOfGameObejcts = new List<GameObject>();
@@ -127,6 +142,11 @@ public class Map_Generator_Script : MonoBehaviour
         return listOfGameObejcts;
     }
 
+    /// <summary>
+    /// Spawns the passed prefab.
+    /// Sets that objects transforms position to the vector3 value passed.
+    /// </summary>
+    /// <returns>The object.</returns>
     private GameObject SpawnObject(GameObject prefab, Vector3 pos)
     {
         GameObject go = Instantiate(prefab);
@@ -134,6 +154,10 @@ public class Map_Generator_Script : MonoBehaviour
         return go;
     }
 
+    /// <summary>
+    /// Calls SpawnObject function passing the Player Prefab and Player Spawn Location.
+    /// </summary>
+	/// <returns>The Player object.</returns>
     public GameObject SpawnPlayer()
     {
         return SpawnObject(m_GOPlayerPrefab, m_vPlayerSpawn);

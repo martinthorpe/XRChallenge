@@ -6,30 +6,44 @@ using UnityEngine;
 [RequireComponent(typeof(Player_Controller_Script))]
 public class Player_Manager_Script : MonoBehaviour
 {
-    private Player_Controller_Script m_GOPlayerController;
+    [Header("Config")]
     [SerializeField] private float m_fMaxHealth;
     private float m_fCurrentHealth;
-    public event Action Death;
-    [SerializeField] private Slider_UI_Script m_sHealthSlider;
 
+    [Header("References")]
+    [SerializeField] private Slider_UI_Script m_sHealthSlider;
+    private Player_Controller_Script m_GOPlayerController;
+    public event Action Death;
+
+    /// <summary>
+    /// Calls the InIt function for the Player Controller and Health Slider scripts.
+    /// </summary>
     public void InIt()
     {
-        m_fMaxHealth = 100.0f;
         m_fCurrentHealth = m_fMaxHealth;
-
         if (m_sHealthSlider != null)
         {
-            m_sHealthSlider.InIt(GetHealth() / 100.0f);
+            m_sHealthSlider.InIt(GetCurrentHealth() / m_fMaxHealth);
         }
         m_GOPlayerController = gameObject.GetComponent<Player_Controller_Script>();
         m_GOPlayerController.InIt();
     }
 
-    public float GetHealth()
+    /// <summary>
+    /// Initialise and reset the properties.
+    /// Make the Pickup available again.
+    /// </summary>
+	/// <returns>Current Health of the Player</returns>
+    public float GetCurrentHealth()
     {
         return m_fCurrentHealth;
     }
 
+    /// <summary>
+    /// Adds new health calue to current health.]
+    /// Checks if current healh has dropped below 0, if so calls Death event.
+    /// Calls UpdateHealthUI to inform the player through the UI of changes to their health.
+    /// </summary>
     public void ChangeHealth(float newValue)
     {
         m_fCurrentHealth += newValue;
@@ -40,11 +54,23 @@ public class Player_Manager_Script : MonoBehaviour
         UpdateHealthUI();
     }
 
+    /// <summary>
+    /// Checks HealthSlider isn't null.
+    /// If it is't then calls its ChangeValue with the current health of the Player.
+    /// </summary>
     private void UpdateHealthUI()
     {
-        m_sHealthSlider.ChangeValue(GetHealth() / 100.0f);
+        if (m_sHealthSlider != null)
+        {
+            m_sHealthSlider.ChangeValue(GetCurrentHealth() / m_fMaxHealth);
+        }
     }
 
+    /// <summary>
+    /// If the Player enters the collider of a Pickup; calls its GetPickedUp function.
+    /// If the player enters the collider of a HealthAffector; it calls its AddedPlayerHealthValue function, then destroys the object.
+    /// If the player enters the collider of a FinishedArea; it calls its Entered function.
+    /// </summary>
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.gameObject.TryGetComponent<Pickup>(out Pickup pick))

@@ -6,15 +6,10 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System.Linq;
 
-
 [RequireComponent(typeof(Map_Generator_Script))]
 public class Game_Manager_Script : MonoBehaviour
 {
-    [SerializeField] private UI_Text_Script m_GOTimerUI;
-    [SerializeField] private UI_Text_Script m_GOScoreUI;
-    private Map_Generator_Script m_Map_Generator;
-    private Player_Manager_Script m_GOPlayerCharacter;
-    private Finished_Area_Script m_GOFinishedArea;
+    [Header("Config")]
     private List<Pickup> m_StarList;
     private bool m_bHasSetUpLinks;
     private int m_iStarCount;
@@ -22,6 +17,16 @@ public class Game_Manager_Script : MonoBehaviour
     private float m_fTimer;
     private int[] m_aMapArray;
 
+    [Header("References")]
+    [SerializeField] private UI_Text_Script m_GOTimerUI;
+    [SerializeField] private UI_Text_Script m_GOScoreUI;
+    private Map_Generator_Script m_Map_Generator;
+    private Player_Manager_Script m_GOPlayerCharacter;
+    private Finished_Area_Script m_GOFinishedArea;
+
+    /// <summary>
+    /// Removes the connection to the Pickup, Finished Area and Player Character Script events to functions in this script.
+    /// </summary>
     private void OnDisable()
     {
         foreach(Pickup pu in m_StarList)
@@ -32,6 +37,11 @@ public class Game_Manager_Script : MonoBehaviour
         m_GOPlayerCharacter.Death -= SpawnPlayer;
     }
 
+    /// <summary>
+    /// Gets the Map Generator Script.
+    /// Sets up Star List, sets HasSetUpLinks to false, and Timer to 0.0.
+    /// If TimerUI and ScoreUI aren't null, then call both their InIt functions.
+    /// </summary>
     private void Awake()
     {
         m_Map_Generator = GetComponent<Map_Generator_Script>();
@@ -48,6 +58,10 @@ public class Game_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If HasSetUpLinks is false; then call SetUpLinks function and set HasSetUpLinks to false.
+    /// Calls UpdateTimer function.
+    /// </summary>
     private void Update()
     {
         if (!m_bHasSetUpLinks)
@@ -58,12 +72,23 @@ public class Game_Manager_Script : MonoBehaviour
         UpdateTimer();
     }
 
+    /// <summary>
+    /// Calls SetUpLevel function.
+    /// Sets StarCount to m_StarLists count
+    /// </summary>
     private void Start()
     {
         SetUpLevel();
         m_iStarCount = m_StarList.Count;
     }
 
+    /// <summary>
+    /// Calls Map Generators BuildMap function and returns with objects in the game world within a list.
+    /// Looping through that list checks if any has one of these scripts to figure out what it is.
+    /// If it is a Star Pickup; adds it to StarList.
+    /// If it is the Player, sets it to Player Character, calls its InIt function and assigns it Death event to SpawnPlayer function.
+    /// If it is the Finished Area, sets it to Finished Area, calls its InIt function and assigns it EnteredArea event to EnteredFinishedArea function.
+    /// </summary>
     private void SetUpLevel()
     {
         List<GameObject> listOfGameObjects = m_Map_Generator.BuildMap();
@@ -88,12 +113,22 @@ public class Game_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Increases the Timer.
+    /// If Timer UI isn't null, then calls its ChangeText function passing the Timer value.
+    /// </summary>
     private void UpdateTimer()
     {
         m_fTimer += Time.deltaTime;
-        m_GOTimerUI.ChangeText("TIMER: " + ((int)m_fTimer).ToString());
+        if (m_GOTimerUI != null)
+        {
+            m_GOTimerUI.ChangeText("TIMER: " + ((int)m_fTimer).ToString());
+        }
     }
 
+    /// <summary>
+    /// Assigns the connections of the Pickup Script event to the function PickedUpStar.
+    /// </summary>
     private void SetUpLinks()
     {
         foreach (Pickup pu in m_StarList)
@@ -102,6 +137,12 @@ public class Game_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reduces Star Count.
+    /// If Star Count is 0 or below then calls Finished Area function SetEnterable passing true.
+    /// Increases Player Score with the picked up star score value.
+    /// If Score UI isn't null then updates it to the new Player Score.
+    /// </summary>
     private void PickedUpStar(Pickup up)
     {
         m_iStarCount--;
@@ -109,13 +150,16 @@ public class Game_Manager_Script : MonoBehaviour
         {
             m_GOFinishedArea.SetEnterable(true);
         }
+        m_iPlayerScore += up.ScoreValue;
         if (m_GOScoreUI != null)
         {
-            m_iPlayerScore += up.ScoreValue;
             m_GOScoreUI.ChangeText("SCORE: " + m_iPlayerScore.ToString());
         }
     }
 
+    /// <summary>
+    /// If Player Character isn't null then destroys it.
+    /// </summary>
     private void SpawnPlayer()
     {
         if (m_GOPlayerCharacter != null)
@@ -124,6 +168,9 @@ public class Game_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads Scene 0.
+    /// </summary>
     private void EnteredFinishedArea()
     {
         SceneManager.LoadScene(0);
