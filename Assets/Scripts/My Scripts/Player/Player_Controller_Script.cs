@@ -11,6 +11,7 @@ public class Player_Controller_Script : MonoBehaviour
     [Header("Config")]
     [SerializeField] private float m_fSpeed;
     [SerializeField] private float m_fJumpForce;
+    [SerializeField] private float m_fSensitivity;
 
     [Header("References")]
     [SerializeField] private IsGrounded_Script m_Grounded;
