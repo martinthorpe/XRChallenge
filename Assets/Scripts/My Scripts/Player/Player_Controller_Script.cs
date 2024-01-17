@@ -10,6 +10,7 @@ public class Player_Controller_Script : MonoBehaviour
 {
     [Header("Config")]
     [SerializeField] private float m_fSpeed;
+    [SerializeField] private float m_fMaxVelocity;
     [SerializeField] private float m_fJumpForce;
     [SerializeField] private float m_fSensitivity;
 
@@ -23,6 +24,10 @@ public class Player_Controller_Script : MonoBehaviour
     private bool m_bIsMoving;
     private bool m_bIsJumping;
     private bool m_bIsGrounded;
+    private Coroutine m_CRTurn;
+    private bool m_bIsTurning;
+    private float m_fCurrentY;
+    private float m_fTurnAmount;
 
     /// <summary>
     /// Removes the connection to the Input Actions and Ground Script events to functions in this script.
@@ -32,6 +37,8 @@ public class Player_Controller_Script : MonoBehaviour
         m_Input.currentActionMap.FindAction("Move").performed -= Handle_MovePerformed;
         m_Input.currentActionMap.FindAction("Move").canceled -= Handle_MoveCancelled;
         m_Input.currentActionMap.FindAction("Jump").performed -= Handle_JumpPerformed;
+        m_Input.currentActionMap.FindAction("Camera").performed -= Handle_CameraPerformed;
+        m_Input.currentActionMap.FindAction("Camera").canceled -= Handle_CameraCanceled;
         m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround -= HitGround;
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround -= LeftGround;
     }
@@ -47,15 +54,63 @@ public class Player_Controller_Script : MonoBehaviour
         m_RB = GetComponent<Rigidbody>();
 
         m_CRMove = null;
+        m_CRTurn = null;
         m_VMove = new Vector2(0.0f, 0.0f);
+        m_fCurrentY = 0.0f;
+        m_fTurnAmount = 0.0f;
         m_bIsMoving = false;
         m_bIsJumping = false;
+        m_bIsTurning = false;
 
         m_Input.currentActionMap.FindAction("Move").performed += Handle_MovePerformed;
         m_Input.currentActionMap.FindAction("Move").canceled += Handle_MoveCancelled;
         m_Input.currentActionMap.FindAction("Jump").performed += Handle_JumpPerformed;
+        m_Input.currentActionMap.FindAction("Camera").performed += Handle_CameraPerformed;
+        m_Input.currentActionMap.FindAction("Camera").canceled += Handle_CameraCanceled;
         m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround += HitGround;
         m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
+    }
+
+    /// <summary>
+    /// Sets the context value being passed to the Turn float value and Turning varible to true.
+    /// Starts the turn coroutine.
+    /// </summary>
+    private void Handle_CameraPerformed(InputAction.CallbackContext context)
+    {
+        m_fTurnAmount = context.ReadValue<float>();
+        m_bIsTurning = true;
+        if (m_CRTurn == null)
+        {
+            m_CRTurn = StartCoroutine(C_TurnUpdate());
+        }
+    }
+
+    /// <summary>
+    /// Sets the context value being passed to the Turn float value and sets Turning to false.
+    /// Checks if coroutine is active, which if it is it stops.
+    /// </summary>
+    private void Handle_CameraCanceled(InputAction.CallbackContext context)
+    {
+        m_fTurnAmount = context.ReadValue<float>();
+        m_bIsTurning = false;
+        if (m_CRTurn != null)
+        {
+            StopCoroutine(m_CRTurn);
+            m_CRTurn = null;
+        }
+    }
+
+    /// <summary>
+    /// While Is Turning is true, rotates the player.
+    /// </summary>
+    private IEnumerator C_TurnUpdate()
+    {
+        while (m_bIsTurning)
+        {
+            m_fCurrentY += (m_fSensitivity * m_fTurnAmount);
+            transform.localRotation = Quaternion.Euler(0.0f, m_fCurrentY, 0.0f);
+            yield return null;
+        }
     }
 
     /// <summary>
@@ -79,7 +134,7 @@ public class Player_Controller_Script : MonoBehaviour
     private void Handle_MoveCancelled(InputAction.CallbackContext context)
     {
         m_VMove = context.ReadValue<Vector2>();
-        m_RB.velocity = new Vector2(m_VMove.x * m_fSpeed, m_VMove.y * m_fSpeed);
+        m_RB.velocity = new Vector3(m_VMove.x * m_fSpeed, m_RB.velocity[1], m_VMove.y * m_fSpeed);
         m_bIsMoving = false;
         if (m_CRMove != null)
         {
@@ -95,19 +150,36 @@ public class Player_Controller_Script : MonoBehaviour
     {
         if (!m_bIsJumping && m_bIsGrounded)
         {
-            m_RB.velocity = new Vector3(0.0f, m_fJumpForce, 0.0f);
+            m_RB.AddForce(transform.up * m_fJumpForce);
             m_bIsJumping = true;
         }
     }
 
     /// <summary>
-    /// While Is Moving is true, then sets the rigidbody attached to the player velocity a new value using the Move and Speed varibles.
+    /// While Is Moving is true, then adds force to the rigidbody attached to the player.
     /// </summary>
     private IEnumerator C_MoveUpdate()
     {
         while (m_bIsMoving)
         {
-            m_RB.velocity = new Vector3(m_VMove.x * m_fSpeed, m_RB.velocity.y, m_VMove.y * m_fSpeed);
+            m_RB.AddForce(transform.forward * m_VMove.y * m_fSpeed);
+            m_RB.AddForce(transform.right * m_VMove.x * m_fSpeed);
+            if (m_RB.velocity[2] >= m_fMaxVelocity)
+            {
+                m_RB.velocity = new Vector3(m_RB.velocity[0], m_RB.velocity[1], m_fMaxVelocity);
+            }
+            else if (m_RB.velocity[2] <= m_fMaxVelocity * -1.0f)
+            {
+                m_RB.velocity = new Vector3(m_RB.velocity[0], m_RB.velocity[1], m_fMaxVelocity * -1.0f);
+            }
+            if (m_RB.velocity[0] >= m_fMaxVelocity)
+            {
+                m_RB.velocity = new Vector3(m_fMaxVelocity, m_RB.velocity[1], m_RB.velocity[2]);
+            }
+            else if (m_RB.velocity[0] <= m_fMaxVelocity * -1.0f)
+            {
+                m_RB.velocity = new Vector3(m_fMaxVelocity * - 1.0f, m_RB.velocity[1], m_RB.velocity[2]);
+            }
             yield return null;
         }
     }
