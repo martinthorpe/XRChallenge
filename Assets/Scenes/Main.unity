@@ -195,6 +195,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 8074262355262702996, guid: cce073cc8403d2d4d94ef3e7e007de0b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cce073cc8403d2d4d94ef3e7e007de0b, type: 3}
 --- !u!1 &143000809
@@ -263,6 +268,8 @@ MonoBehaviour:
   m_GOFinishedAreaPrefab: {fileID: 2956907269273853947, guid: cc227c0d129801b4ea70907a76719520,
     type: 3}
   m_GOWallPrefab: {fileID: 8074262355262702996, guid: cce073cc8403d2d4d94ef3e7e007de0b,
+    type: 3}
+  m_GOFloorPrefab: {fileID: 1419899086778386817, guid: d7cefd7560258eb4488c4b8cd2281636,
     type: 3}
   m_GOHealthPotionPrefab: {fileID: 6112919772514704509, guid: e83bf4c2125b3644aa4eac2c473a13cb,
     type: 3}
@@ -438,6 +445,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Wall (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8074262355262702996, guid: cce073cc8403d2d4d94ef3e7e007de0b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cce073cc8403d2d4d94ef3e7e007de0b, type: 3}
@@ -755,7 +767,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1043251727
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -906,6 +918,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8074262355262702996, guid: cce073cc8403d2d4d94ef3e7e007de0b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cce073cc8403d2d4d94ef3e7e007de0b, type: 3}
 --- !u!1001 &1106051639
@@ -984,6 +1001,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Wall (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8074262355262702996, guid: cce073cc8403d2d4d94ef3e7e007de0b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cce073cc8403d2d4d94ef3e7e007de0b, type: 3}

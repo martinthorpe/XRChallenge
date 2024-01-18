@@ -12,6 +12,7 @@ public class Map_Generator_Script : MonoBehaviour
     [SerializeField] private GameObject m_GOStarPickupPrefab;
     [SerializeField] private GameObject m_GOFinishedAreaPrefab;
     [SerializeField] private GameObject m_GOWallPrefab;
+    [SerializeField] private GameObject m_GOFloorPrefab;
     [SerializeField] private GameObject m_GOHealthPotionPrefab;
     [SerializeField] private GameObject m_GOHazardPrefab;
     [SerializeField] private Vector3 m_vPlayerSpawn;
@@ -30,11 +31,12 @@ public class Map_Generator_Script : MonoBehaviour
         {
             return SpawnDefaultMap();
         }
-        for (int i = 0; i < fileLines.Count || i < m_iSizeLimit; i++)
+        fileLines = AddSpaces(fileLines);
+        for (int i = 0; i < fileLines.Count; i++)
         {
-            for (int x = 0; x < fileLines[i].Length || x < m_iSizeLimit; x++)
+            for (int x = 0; x < fileLines[i].Length; x++)
             {
-                Vector3 pos = new Vector3((i - m_iSizeLimit / 2.0f) + 0.5f, 0.5f, (x - m_iSizeLimit / 2.0f) + 0.5f);
+                Vector3 pos = new Vector3(i, 0.5f, x);
                 switch (fileLines[i][x])
                 {
                     case '1':
@@ -56,10 +58,77 @@ public class Map_Generator_Script : MonoBehaviour
                         m_vPlayerSpawn = pos;
                         listOfGameObejcts.Add(SpawnPlayer());
                         break;
+                    case ' ':
+                        continue;
                 }
+                SpawnObject(m_GOFloorPrefab, new Vector3(pos[0], 0.0f, pos[2]));
             }
         }
         return listOfGameObejcts;
+    }
+
+    private List<string> AddSpaces(List<string> fileLines)
+    {
+        //get largest x
+        int largestX = 0;
+        for (int i = 0; i < fileLines.Count; i++)
+        {
+            if (fileLines[i].Length > largestX)
+            {
+                largestX = fileLines[i].Length;
+            }
+        }
+        //extend x
+        for (int i = 0; i < fileLines.Count; i++)
+        {
+            string newX = "1";
+            foreach (char c in fileLines[i])
+            {
+                newX = newX + c;
+            }
+            for (int x = 0; x < largestX - fileLines[i].Length; x++)
+            {
+                newX = newX + '1';
+            }
+            newX = newX + '1';
+            fileLines[i] = newX;
+        }
+        //extend y
+        string newY = "";
+        for (int x = 0; x < largestX + 2; x++)
+        {
+            newY = newY + '1';
+        }
+        fileLines.Insert(0, newY);
+        fileLines.Add(newY);
+        //remove unneeded walls
+        for (int i = 1; i < fileLines.Count - 1; i++)
+        {
+            for (int x = 1; x < fileLines[i].Length - 1; x++)
+            {
+                if (fileLines[i][x] == '1' && 
+                    (fileLines[i + 1][x] == '1' || fileLines[i + 1][x] == ' ') &&
+                    (fileLines[i - 1][x] == '1' || fileLines[i - 1][x] == ' ') &&
+                    (fileLines[i][x + 1] == '1' || fileLines[i][x + 1] == ' ') &&
+                    (fileLines[i][x - 1] == '1' || fileLines[i][x - 1] == ' '))
+                {
+                    string newString = "";
+                    for (int t = 0; t < fileLines[i].Length; t++)
+                    {
+                        if (t == x)
+                        {
+                            newString = newString + ' ';
+                        }
+                        else
+                        {
+                            newString = newString + fileLines[i][t];
+                        }
+                    }
+                    fileLines[i] = newString;
+                }
+            }
+        }
+        return fileLines;
     }
 
     /// <summary>
