@@ -120,8 +120,19 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "",
+                    "id": "095fecab-28b6-4f56-bc5f-daeacdafa787",
+                    "path": "<Gamepad>/rightStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
                     "name": "1D Axis",
-                    "id": "a3a49c45-b075-426b-9e49-9e5e56218fa6",
+                    "id": "76cc87a7-a728-4599-86eb-a4c3e4470cc3",
                     "path": "1DAxis",
                     "interactions": "",
                     "processors": "",
@@ -132,7 +143,7 @@
                 },
                 {
                     "name": "negative",
-                    "id": "b632a5ea-f858-4918-9bbd-edd2eff8f9a2",
+                    "id": "b36fbeb0-d962-449c-9329-514afa658256",
                     "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
@@ -143,7 +154,7 @@
                 },
                 {
                     "name": "positive",
-                    "id": "d750e49c-5ae0-45c0-bed5-866dd4e5868b",
+                    "id": "45e52e0b-b00e-447e-88e1-fad776f1bc20",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
