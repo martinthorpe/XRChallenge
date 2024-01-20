@@ -7,7 +7,6 @@ using System.Linq;
 public class Map_Generator_Script : MonoBehaviour
 {
     [Header("Config")]
-    [SerializeField] private int m_iSizeLimit = 10;
     [SerializeField] private GameObject m_GOPlayerPrefab;
     [SerializeField] private GameObject m_GOStarPickupPrefab;
     [SerializeField] private GameObject m_GOFinishedAreaPrefab;
@@ -19,25 +18,27 @@ public class Map_Generator_Script : MonoBehaviour
 
     /// <summary>
     /// Checks if the map is valid. If it isn't valid then it returns the default map.
+    /// Funs AddBorders and RemoveUnneededWalls functions to make sure the map is safe to player and cleans it up.
     /// For each element it checks what the number is and spawns a certain prefab.
     /// Adding them to a list if they're either; star pickup, finished area, or player spawn.
     /// On Each row or column counting and stopping if incase it passes the maps physical limits.
     /// </summary>
     /// <returns>The list of game objects in the world.</returns>
-    public List<GameObject> BuildMap(List<string> fileLines)
+    public List<GameObject> BuildMap(List<string> map)
     {
         List<GameObject> listOfGameObejcts = new List<GameObject>();
-        if (!CheckMapIsValid(fileLines))
+        if (!CheckMapIsValid(map))
         {
             return SpawnDefaultMap();
         }
-        fileLines = AddSpaces(fileLines);
-        for (int i = 0; i < fileLines.Count; i++)
+        map = AddBorders(map);
+        map = RemoveUnneededWalls(map);
+        for (int i = 0; i < map.Count; i++)
         {
-            for (int x = 0; x < fileLines[i].Length; x++)
+            for (int x = 0; x < map[i].Length; x++)
             {
                 Vector3 pos = new Vector3(i, 0.5f, x);
-                switch (fileLines[i][x])
+                switch (map[i][x])
                 {
                     case '1':
                         SpawnObject(m_GOWallPrefab, pos);
@@ -67,31 +68,31 @@ public class Map_Generator_Script : MonoBehaviour
         return listOfGameObejcts;
     }
 
-    private List<string> AddSpaces(List<string> fileLines)
+    private List<string> AddBorders(List<string> map)
     {
         //get largest x
         int largestX = 0;
-        for (int i = 0; i < fileLines.Count; i++)
+        for (int i = 0; i < map.Count; i++)
         {
-            if (fileLines[i].Length > largestX)
+            if (map[i].Length > largestX)
             {
-                largestX = fileLines[i].Length;
+                largestX = map[i].Length;
             }
         }
         //extend x
-        for (int i = 0; i < fileLines.Count; i++)
+        for (int i = 0; i < map.Count; i++)
         {
             string newX = "1";
-            foreach (char c in fileLines[i])
+            foreach (char c in map[i])
             {
                 newX = newX + c;
             }
-            for (int x = 0; x < largestX - fileLines[i].Length; x++)
+            for (int x = 0; x < largestX - map[i].Length; x++)
             {
                 newX = newX + '1';
             }
             newX = newX + '1';
-            fileLines[i] = newX;
+            map[i] = newX;
         }
         //extend y
         string newY = "";
@@ -99,21 +100,25 @@ public class Map_Generator_Script : MonoBehaviour
         {
             newY = newY + '1';
         }
-        fileLines.Insert(0, newY);
-        fileLines.Add(newY);
-        //remove unneeded walls
-        for (int i = 1; i < fileLines.Count - 1; i++)
+        map.Insert(0, newY);
+        map.Add(newY);
+        return map;
+    }
+
+    private List<string> RemoveUnneededWalls(List<string> map)
+    {
+        for (int i = 0; i < map.Count; i++)
         {
-            for (int x = 1; x < fileLines[i].Length - 1; x++)
+            for (int x = 0; x < map[i].Length; x++)
             {
-                if (fileLines[i][x] == '1' && 
-                    (fileLines[i + 1][x] == '1' || fileLines[i + 1][x] == ' ') &&
-                    (fileLines[i - 1][x] == '1' || fileLines[i - 1][x] == ' ') &&
-                    (fileLines[i][x + 1] == '1' || fileLines[i][x + 1] == ' ') &&
-                    (fileLines[i][x - 1] == '1' || fileLines[i][x - 1] == ' '))
+                if (map[i][x] == '1' &&
+                    ((i + 1 == map.Count) || (map[i + 1][x] == '1' || map[i + 1][x] == ' ')) &&
+                    ((i - 1 == -1) || (map[i - 1][x] == '1' || map[i - 1][x] == ' ')) &&
+                    ((x + 1 == map[i].Length) || (map[i][x + 1] == '1' || map[i][x + 1] == ' ')) &&
+                    ((x - 1 == -1) || (map[i][x - 1] == '1' || map[i][x - 1] == ' ')))
                 {
                     string newString = "";
-                    for (int t = 0; t < fileLines[i].Length; t++)
+                    for (int t = 0; t < map[i].Length; t++)
                     {
                         if (t == x)
                         {
@@ -121,30 +126,30 @@ public class Map_Generator_Script : MonoBehaviour
                         }
                         else
                         {
-                            newString = newString + fileLines[i][t];
+                            newString = newString + map[i][t];
                         }
                     }
-                    fileLines[i] = newString;
+                    map[i] = newString;
                 }
             }
         }
-        return fileLines;
+        return map;
     }
 
     /// <summary>
     /// Checks if the list it was passed contains at least 5 stars and only one player spawn and one finished area.
     /// </summary>
     /// <returns>True if the map is valid, and false if it isn't.</returns>
-    private bool CheckMapIsValid(List<string> fileLines)
+    private bool CheckMapIsValid(List<string> map)
     {
         int starCount = 0;
         bool hasPlayerSpawn = false;
         bool hasFinishArea = false;
-        for (int i = 0; i < fileLines.Count; i++)
+        for (int i = 0; i < map.Count; i++)
         {
-            for (int x = 0; x < fileLines[i].Length; x++)
+            for (int x = 0; x < map[i].Length; x++)
             {
-                switch (fileLines[i][x])
+                switch (map[i][x])
                 {
                     case '2':
                         starCount++;

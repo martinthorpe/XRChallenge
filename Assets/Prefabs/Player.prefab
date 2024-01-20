@@ -774,7 +774,7 @@ MonoBehaviour:
   m_fSpeed: 0.5
   m_fMaxVelocity: 4
   m_fJumpForce: 200
-  m_fSensitivity: 0.05
+  m_fSensitivity: 0.1
   m_Grounded: {fileID: 4734266953544678136}
 --- !u!114 &4734266954423185491
 MonoBehaviour:
