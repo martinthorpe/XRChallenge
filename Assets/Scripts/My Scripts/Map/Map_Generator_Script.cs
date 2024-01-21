@@ -40,6 +40,8 @@ public class Map_Generator_Script : MonoBehaviour
                 Vector3 pos = new Vector3(i, 0.5f, x);
                 switch (map[i][x])
                 {
+                    case '0':
+                        continue;
                     case '1':
                         SpawnObject(m_GOWallPrefab, pos);
                         break;
@@ -59,8 +61,6 @@ public class Map_Generator_Script : MonoBehaviour
                         m_vPlayerSpawn = pos;
                         listOfGameObejcts.Add(SpawnPlayer());
                         break;
-                    case ' ':
-                        continue;
                 }
                 SpawnObject(m_GOFloorPrefab, new Vector3(pos[0], 0.0f, pos[2]));
             }
