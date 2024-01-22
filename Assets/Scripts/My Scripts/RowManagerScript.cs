@@ -6,14 +6,9 @@ using UnityEngine;
 public class RowManagerScript : MonoBehaviour
 {
     private List<GridSlotScript> m_ListOfGridSlots;
-
-    public void InIt(int numberOfItems, Sprite sprite, int itemNum, int y, GameObject slotGridPrefab)
+    public void InIt()
     {
         m_ListOfGridSlots = new List<GridSlotScript>();
-        for (int i = 0; i < numberOfItems; i++)
-        {
-            AddRowItem(sprite, itemNum, y, slotGridPrefab);
-        }
     }
 
     public void AddRowItem(Sprite sprite, int itemNum, int y, GameObject slotGridPrefab)
