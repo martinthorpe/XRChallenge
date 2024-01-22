@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-//[RequireComponent(typeof(HorizontalLayoutGroup))]
+[RequireComponent(typeof(HorizontalLayoutGroup))]
 public class RowManagerScript : MonoBehaviour
 {
     private List<GridSlotScript> m_ListOfGridSlots;
