@@ -179,6 +179,26 @@ public class Game_Manager_Script : MonoBehaviour
     /// </summary>
     private void EnteredFinishedArea()
     {
+        string Path = Application.dataPath + "/Score.txt";
+        List<string> fileLines = File.ReadAllLines(Path).ToList();
+        if (fileLines.Count < 2)
+        {
+            fileLines.Add(((int)m_fTimer).ToString());
+            fileLines.Add(((int)m_iPlayerScore).ToString());
+            File.WriteAllLines(Path, fileLines);
+        }
+        else
+        {
+            if (int.Parse(fileLines[0]) > (int)m_fTimer || int.Parse(fileLines[0]) == 0)
+            {
+                fileLines[0] = ((int)m_fTimer).ToString();
+            }
+            if (int.Parse(fileLines[1]) < m_iPlayerScore)
+            {
+                fileLines[1] = m_iPlayerScore.ToString();
+            }
+            File.WriteAllLines(Path, fileLines);
+        }
         SceneManager.LoadScene(0);
     }
 }

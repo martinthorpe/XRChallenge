@@ -10,15 +10,16 @@ public class GridSlotScript : MonoBehaviour
 {
     private Image m_Image;
     private int m_Item;
-    private Vector2 m_MapCoords;
+    private int m_iRow;
     public event Action<GridSlotScript> OnClicked;
 
-    public void InIt(Sprite sprite, int item, Vector2 coords)
+    public void InIt(Sprite sprite, int item, int row)
     {
         m_Image = GetComponent<Image>();
         m_Image.sprite = sprite;
         m_Item = item;
-        m_MapCoords = coords;
+        m_iRow = row;
+        GetComponent<Button>().onClick.AddListener(ButtonOnClick);
     }
 
     public int GetItem()
@@ -26,9 +27,9 @@ public class GridSlotScript : MonoBehaviour
         return m_Item;
     }
 
-    public Vector2 GetMapCoords()
+    public int GetYPoint()
     {
-        return m_MapCoords;
+        return m_iRow;
     }
 
     public void ChangeItem(Sprite sprite, int item)
@@ -37,7 +38,7 @@ public class GridSlotScript : MonoBehaviour
         m_Item = item;
     }
 
-    public void ClickedGrid()
+    private void ButtonOnClick()
     {
         OnClicked?.Invoke(this);
     }
