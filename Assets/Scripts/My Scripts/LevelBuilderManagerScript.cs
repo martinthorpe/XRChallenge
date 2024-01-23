@@ -35,9 +35,13 @@ public class LevelBuilderManagerScript : MonoBehaviour
             m_ListOfEditMapSizeButton.Add(Instantiate(m_EditMapSizeButtonScriptPrefab, m_EditMapSizePanel));
         }
         m_ListOfEditMapSizeButton[0].InIt("Add Column");
+        m_ListOfEditMapSizeButton[0].OnClicked += AddColumn;
         m_ListOfEditMapSizeButton[1].InIt("Remove Column");
+        m_ListOfEditMapSizeButton[1].OnClicked += RemoveColumn;
         m_ListOfEditMapSizeButton[2].InIt("Add Row");
+        m_ListOfEditMapSizeButton[2].OnClicked += AddRow;
         m_ListOfEditMapSizeButton[3].InIt("Remove Row");
+        m_ListOfEditMapSizeButton[3].OnClicked += RemoveRow;
 
         m_iInHandItem = -1;
         string lineOne = "111111";
@@ -69,6 +73,10 @@ public class LevelBuilderManagerScript : MonoBehaviour
         {
             m_ListOfItemChoiceButton[i].OnClicked -= SetInHandItem;
         }
+        m_ListOfEditMapSizeButton[0].OnClicked -= AddColumn;
+        m_ListOfEditMapSizeButton[1].OnClicked -= RemoveColumn;
+        m_ListOfEditMapSizeButton[2].OnClicked -= AddRow;
+        m_ListOfEditMapSizeButton[3].OnClicked -= RemoveRow;
     }
 
     private void ChangeGridSlotValue(GridSlotScript gridSlot)
@@ -97,5 +105,25 @@ public class LevelBuilderManagerScript : MonoBehaviour
                 gridSlot.ChangeItem(m_Sprites[m_iInHandItem], m_iInHandItem);
                 break;
         }
+    }
+
+    private void AddColumn()
+    {
+        m_MapManagerScript.AddColumn(m_Sprites[0]);
+    }
+
+    private void RemoveColumn()
+    {
+        m_MapManagerScript.RemoveColumn();
+    }
+
+    private void AddRow()
+    {
+        m_MapManagerScript.AddRow(m_Sprites[0]);
+    }
+
+    private void RemoveRow()
+    {
+        m_MapManagerScript.RemoveRow();
     }
 }
