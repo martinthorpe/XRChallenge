@@ -124,4 +124,9 @@ public class MapScript
         map.Add("402150");
         return map;
     }
+
+    public static List<string> CheckMapIsFull(List<string> map)
+    {
+        return map;
+    }
 }
