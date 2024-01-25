@@ -1,0 +1,44 @@
+{
+    "name": "MenuActions",
+    "maps": [
+        {
+            "name": "MenuChoices",
+            "id": "7f78e5db-8546-431e-a7ee-587427f0d300",
+            "actions": [
+                {
+                    "name": "Exit",
+                    "type": "Button",
+                    "id": "670c38eb-3b0c-4558-883f-ab4c3a999b6b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "78a089f8-1a96-476e-a38d-61199f77f0d1",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c26d5eb7-dfea-4d88-b584-a48ec2d06528",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -4,35 +4,14 @@ using UnityEngine;
 
 public class MapScript
 {
-    public static List<string> AddBorders(List<string> map)
+    public static List<string> AddOutsideWalls(List<string> map)
     {
-        //get largest x
-        int largestX = 0;
         for (int i = 0; i < map.Count; i++)
         {
-            if (map[i].Length > largestX)
-            {
-                largestX = map[i].Length;
-            }
+            map[i] = "1" + map[i] + "1";
         }
-        //extend x
-        for (int i = 0; i < map.Count; i++)
-        {
-            string newX = "1";
-            foreach (char c in map[i])
-            {
-                newX = newX + c;
-            }
-            for (int x = 0; x < largestX - map[i].Length; x++)
-            {
-                newX = newX + '1';
-            }
-            newX = newX + '1';
-            map[i] = newX;
-        }
-        //extend y
         string newY = "";
-        for (int x = 0; x < largestX + 2; x++)
+        for (int x = 0; x < map[0].Length; x++)
         {
             newY = newY + '1';
         }
@@ -125,8 +104,51 @@ public class MapScript
         return map;
     }
 
-    public static List<string> CheckMapIsFull(List<string> map)
+    public static string ChangeUnvalidToFloor(string line, char[] valid)
     {
+        string newLine = "";
+        for (int i = 0; i < line.Length; i++)
+        {
+            bool isValid = false;
+            foreach (char c in valid)
+            {
+                if (line[i] == c)
+                {
+                    isValid = true;
+                }
+            }
+            if (isValid)
+            {
+                newLine = newLine + line[i];
+            }
+            else
+            {
+                newLine = newLine + valid[0];
+            }
+        }
+        return newLine;
+    }
+
+    public static List<string> CheckMapIsFull(List<string> map, char[] valid)
+    {
+        int largestX = 0;
+        for (int i = 0; i < map.Count; i++)
+        {
+            if (map[i].Length > largestX)
+            {
+                largestX = map[i].Length;
+            }
+        }
+        for (int i = 0; i < map.Count; i++)
+        {
+            string newX = ChangeUnvalidToFloor(map[i], valid);
+
+            for (int x = 0; x < largestX - map[i].Length; x++)
+            {
+                newX = newX + '1';
+            }
+            map[i] = newX;
+        }
         return map;
     }
 }

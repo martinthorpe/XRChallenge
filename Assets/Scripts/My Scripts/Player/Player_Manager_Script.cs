@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Player_Controller_Script))]
+[RequireComponent(typeof(AudioSource))]
 public class Player_Manager_Script : MonoBehaviour
 {
     [Header("Config")]
@@ -13,6 +14,7 @@ public class Player_Manager_Script : MonoBehaviour
     [Header("References")]
     [SerializeField] private Slider_UI_Script m_sHealthSlider;
     private Player_Controller_Script m_GOPlayerController;
+    private AudioSource m_StarPickupSound;
     public event Action Death;
 
     /// <summary>
@@ -21,6 +23,7 @@ public class Player_Manager_Script : MonoBehaviour
     public void InIt()
     {
         m_fCurrentHealth = m_fMaxHealth;
+        m_StarPickupSound = GetComponent<AudioSource>();
         if (m_sHealthSlider != null)
         {
             m_sHealthSlider.InIt(GetCurrentHealth() / m_fMaxHealth);
@@ -75,6 +78,7 @@ public class Player_Manager_Script : MonoBehaviour
     {
         if (collider.gameObject.TryGetComponent<Pickup>(out Pickup pick))
         {
+            m_StarPickupSound.Play();
             int lol = pick.GetPickedUp();
         }
         else if (collider.gameObject.TryGetComponent<IHealthAffector>(out IHealthAffector healthAffector))

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Linq;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Map_Generator_Script))]
 public class Game_Manager_Script : MonoBehaviour
@@ -23,6 +24,7 @@ public class Game_Manager_Script : MonoBehaviour
     private Map_Generator_Script m_Map_Generator;
     private Player_Manager_Script m_GOPlayerCharacter;
     private Finished_Area_Script m_GOFinishedArea;
+    private PlayerInput m_Input;
 
     /// <summary>
     /// Removes the connection to the Pickup, Finished Area and Player Character Script events to functions in this script.
@@ -35,6 +37,7 @@ public class Game_Manager_Script : MonoBehaviour
         }
         m_GOFinishedArea.EnteredArea -= EnteredFinishedArea;
         m_GOPlayerCharacter.Death -= SpawnPlayer;
+        m_Input.currentActionMap.FindAction("Exit").performed -= Handle_ExitPerformed;
     }
 
     /// <summary>
@@ -45,6 +48,8 @@ public class Game_Manager_Script : MonoBehaviour
     private void Awake()
     {
         m_Map_Generator = GetComponent<Map_Generator_Script>();
+        m_Input = GetComponent<PlayerInput>();
+        m_Input.currentActionMap.FindAction("Exit").performed += Handle_ExitPerformed;
         m_StarList = new List<Pickup>();
         m_bHasSetUpLinks = false;
         m_fTimer = 0.0f;
@@ -199,6 +204,11 @@ public class Game_Manager_Script : MonoBehaviour
             }
             File.WriteAllLines(Path, fileLines);
         }
+        SceneManager.LoadScene(0);
+    }
+
+    private void Handle_ExitPerformed(InputAction.CallbackContext context)
+    {
         SceneManager.LoadScene(0);
     }
 }

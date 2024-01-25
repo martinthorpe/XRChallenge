@@ -55,7 +55,7 @@ public class LevelBuilderManagerScript : MonoBehaviour
             map.Clear();
             map = MapScript.ReturnDefaultMapTemplate();
         }
-        map = MapScript.AddBorders(map);
+        map = MapScript.CheckMapIsFull(map, "0123456".ToArray());
         m_MapManagerScript.InIt(map, m_Sprites);
         m_MapManagerScript.AddingGridSlots += ConnectGridSLotConnections;
         m_MapManagerScript.RemovingGridSlots += DisconnectGridSLotConnections;

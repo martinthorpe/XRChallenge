@@ -32,7 +32,8 @@ public class Map_Generator_Script : MonoBehaviour
             map.Clear();
             map = MapScript.ReturnDefaultMapTemplate();
         }
-        map = MapScript.AddBorders(map);
+        map = MapScript.CheckMapIsFull(map, "0123456".ToArray());
+        map = MapScript.AddOutsideWalls(map);
         map = MapScript.RemoveUnneededWalls(map);
         for (int i = 0; i < map.Count; i++)
         {
