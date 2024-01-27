@@ -13,6 +13,15 @@ public class IsGrounded_Script : MonoBehaviour
     public event Action OnLeftGround;
 
     /// <summary>
+    /// Sets all the events on this script to null.
+    /// </summary>
+    public void InIt()
+    {
+        OnHitGround = null;
+        OnLeftGround = null;
+    }
+
+    /// <summary>
     /// If entered object is of the layer set to the Ground Layer Mask value.
     /// Then calls OnHitGround event.
     /// </summary>

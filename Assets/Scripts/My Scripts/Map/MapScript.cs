@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MapScript
 {
+    /// <summary>
+    /// Adds a 1 to the start and end of each row and column of the map list.
+    /// </summary>
+    /// <returns>The map list.</returns>
     public static List<string> AddOutsideWalls(List<string> map)
     {
         for (int i = 0; i < map.Count; i++)
@@ -20,6 +24,11 @@ public class MapScript
         return map;
     }
 
+    /// <summary>
+    /// Removes 1s and addes empty spaces to any wall whihc is unneeded.
+    /// This is to remove blocks of walls which may look odd.
+    /// </summary>
+    /// <returns>The map list.</returns>
     public static List<string> RemoveUnneededWalls(List<string> map)
     {
         for (int i = 0; i < map.Count; i++)
@@ -93,6 +102,11 @@ public class MapScript
         return true;
     }
 
+    /// <summary>
+    /// Makes a new string list.
+    /// Adds five string values which represent a map.
+    /// </summary>
+    /// <returns>The string list.</returns>
     public static List<string> ReturnDefaultMapTemplate()
     {
         List<string> map = new List<string>();
@@ -104,6 +118,11 @@ public class MapScript
         return map;
     }
 
+    /// <summary>
+    /// Loops through string.
+    /// If char isn't in char array valid, turns that char into the first item from the array valid.
+    /// </summary>
+    /// <returns>The new string value.</returns>
     public static string ChangeUnvalidToFloor(string line, char[] valid)
     {
         string newLine = "";
@@ -129,6 +148,12 @@ public class MapScript
         return newLine;
     }
 
+    /// <summary>
+    /// Checks what is the longest string and holds that value in largestX.
+    /// Then makes sure each string holds only valid chars.
+    /// Finally extends any string value which isn't the same length as largestX.
+    /// </summary>
+    /// <returns>The string list.</returns>
     public static List<string> CheckMapIsFull(List<string> map, char[] valid)
     {
         int largestX = 0;
@@ -142,10 +167,9 @@ public class MapScript
         for (int i = 0; i < map.Count; i++)
         {
             string newX = ChangeUnvalidToFloor(map[i], valid);
-
             for (int x = 0; x < largestX - map[i].Length; x++)
             {
-                newX = newX + '1';
+                newX = newX + valid[1];
             }
             map[i] = newX;
         }

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IHealthAffector
 {
-    public float AddedPlayerHealthValue();
+    public float ChangedPlayerHealthValue();
 }

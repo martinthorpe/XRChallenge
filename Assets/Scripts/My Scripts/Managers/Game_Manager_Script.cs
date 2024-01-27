@@ -10,7 +10,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Map_Generator_Script))]
 public class Game_Manager_Script : MonoBehaviour
 {
-    [Header("Config")]
     private List<Pickup> m_StarList;
     private bool m_bHasSetUpLinks;
     private int m_iStarCount;
@@ -28,6 +27,7 @@ public class Game_Manager_Script : MonoBehaviour
 
     /// <summary>
     /// Removes the connection to the Pickup, Finished Area and Player Character Script events to functions in this script.
+    /// Removes the exit button action connection.
     /// </summary>
     private void OnDisable()
     {
@@ -43,6 +43,7 @@ public class Game_Manager_Script : MonoBehaviour
     /// <summary>
     /// Gets the Map Generator Script.
     /// Sets up Star List, sets HasSetUpLinks to false, and Timer to 0.0.
+    /// Sets up the exit button action connection.
     /// If TimerUI and ScoreUI aren't null, then call both their InIt functions.
     /// </summary>
     private void Awake()
@@ -71,7 +72,7 @@ public class Game_Manager_Script : MonoBehaviour
     {
         if (!m_bHasSetUpLinks)
         {
-            SetUpLinks();
+            SetUpStarLinks();
             m_bHasSetUpLinks = true;
         }
         UpdateTimer();
@@ -79,12 +80,10 @@ public class Game_Manager_Script : MonoBehaviour
 
     /// <summary>
     /// Calls SetUpLevel function.
-    /// Sets StarCount to m_StarLists count
     /// </summary>
     private void Start()
     {
         SetUpLevel();
-        m_iStarCount = m_StarList.Count;
     }
 
     /// <summary>
@@ -94,6 +93,7 @@ public class Game_Manager_Script : MonoBehaviour
     /// If it is a Star Pickup; adds it to StarList.
     /// If it is the Player, sets it to Player Character, calls its InIt function and assigns it Death event to SpawnPlayer function.
     /// If it is the Finished Area, sets it to Finished Area, calls its InIt function and assigns it EnteredArea event to EnteredFinishedArea function.
+    /// Sets StarCount to m_StarLists count.
     /// </summary>
     private void SetUpLevel()
     {
@@ -118,6 +118,7 @@ public class Game_Manager_Script : MonoBehaviour
                 m_GOFinishedArea.EnteredArea += EnteredFinishedArea;
             }
         }
+        m_iStarCount = m_StarList.Count;
     }
 
     /// <summary>
@@ -136,7 +137,7 @@ public class Game_Manager_Script : MonoBehaviour
     /// <summary>
     /// Assigns the connections of the Pickup Script event to the function PickedUpStar.
     /// </summary>
-    private void SetUpLinks()
+    private void SetUpStarLinks()
     {
         foreach (Pickup pu in m_StarList)
         {
@@ -180,7 +181,9 @@ public class Game_Manager_Script : MonoBehaviour
     }
 
     /// <summary>
-    /// Loads Scene 0.
+    /// Uploads the timer value if it is lower than the one already in the text document.
+    /// Uploads the score value if it is higher than the one already in the text document.
+    /// Loads Scene 0, the main menu.
     /// </summary>
     private void EnteredFinishedArea()
     {
@@ -207,6 +210,9 @@ public class Game_Manager_Script : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
+    /// <summary>
+    /// Loads Scene 0, the main menu.
+    /// </summary>
     private void Handle_ExitPerformed(InputAction.CallbackContext context)
     {
         SceneManager.LoadScene(0);

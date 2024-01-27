@@ -6,7 +6,9 @@ using System.Linq;
 
 public class Map_Generator_Script : MonoBehaviour
 {
-    [Header("Config")]
+    private Vector3 m_vPlayerSpawn;
+
+    [Header("References")]
     [SerializeField] private GameObject m_GOPlayerPrefab;
     [SerializeField] private GameObject m_GOStarPickupPrefab;
     [SerializeField] private GameObject m_GOFinishedAreaPrefab;
@@ -14,14 +16,12 @@ public class Map_Generator_Script : MonoBehaviour
     [SerializeField] private GameObject m_GOFloorPrefab;
     [SerializeField] private GameObject m_GOHealthPotionPrefab;
     [SerializeField] private GameObject m_GOHazardPrefab;
-    [SerializeField] private Vector3 m_vPlayerSpawn;
 
     /// <summary>
     /// Checks if the map is valid. If it isn't valid then it returns the default map.
-    /// Funs AddBorders and RemoveUnneededWalls functions to make sure the map is safe to player and cleans it up.
+    /// Funs CheckMapIsFull, AddOutsideWalls and RemoveUnneededWalls functions to make sure the map is safe to player and cleans it up.
     /// For each element it checks what the number is and spawns a certain prefab.
     /// Adding them to a list if they're either; star pickup, finished area, or player spawn.
-    /// On Each row or column counting and stopping if incase it passes the maps physical limits.
     /// </summary>
     /// <returns>The list of game objects in the world.</returns>
     public List<GameObject> BuildMap(List<string> map)

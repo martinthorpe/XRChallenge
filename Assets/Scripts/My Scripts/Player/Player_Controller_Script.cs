@@ -9,10 +9,10 @@ using UnityEngine.InputSystem;
 public class Player_Controller_Script : MonoBehaviour
 {
     [Header("Config")]
-    [SerializeField] private float m_fSpeed;
-    [SerializeField] private float m_fMaxVelocity;
-    [SerializeField] private float m_fJumpForce;
-    [SerializeField] private float m_fSensitivity;
+    [SerializeField, Range (0.1f, 4.0f)] private float m_fSpeed;
+    [SerializeField, Range(2.0f, 10.0f)] private float m_fMaxVelocity;
+    [SerializeField, Range(50.0f, 500.0f)] private float m_fJumpForce;
+    [SerializeField, Range(0.01f, 1.0f)] private float m_fSensitivity;
 
     [Header("References")]
     [SerializeField] private IsGrounded_Script m_Grounded;
@@ -39,8 +39,8 @@ public class Player_Controller_Script : MonoBehaviour
         m_Input.currentActionMap.FindAction("Jump").performed -= Handle_JumpPerformed;
         m_Input.currentActionMap.FindAction("Camera").performed -= Handle_CameraPerformed;
         m_Input.currentActionMap.FindAction("Camera").canceled -= Handle_CameraCanceled;
-        m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround -= HitGround;
-        m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround -= LeftGround;
+        m_Grounded.OnHitGround -= HitGround;
+        m_Grounded.OnLeftGround -= LeftGround;
     }
 
     /// <summary>
@@ -67,8 +67,13 @@ public class Player_Controller_Script : MonoBehaviour
         m_Input.currentActionMap.FindAction("Jump").performed += Handle_JumpPerformed;
         m_Input.currentActionMap.FindAction("Camera").performed += Handle_CameraPerformed;
         m_Input.currentActionMap.FindAction("Camera").canceled += Handle_CameraCanceled;
-        m_Grounded.GetComponent<IsGrounded_Script>().OnHitGround += HitGround;
-        m_Grounded.GetComponent<IsGrounded_Script>().OnLeftGround += LeftGround;
+
+        if (m_Grounded != null)
+        {
+            m_Grounded.InIt();
+            m_Grounded.OnHitGround += HitGround;
+            m_Grounded.OnLeftGround += LeftGround;
+        }
     }
 
     /// <summary>

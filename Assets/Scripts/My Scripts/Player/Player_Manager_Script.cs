@@ -8,7 +8,7 @@ using UnityEngine;
 public class Player_Manager_Script : MonoBehaviour
 {
     [Header("Config")]
-    [SerializeField] private float m_fMaxHealth;
+    [SerializeField, Range(1, 1000)] private float m_fMaxHealth;
     private float m_fCurrentHealth;
 
     [Header("References")]
@@ -22,6 +22,7 @@ public class Player_Manager_Script : MonoBehaviour
     /// </summary>
     public void InIt()
     {
+        Death = null;
         m_fCurrentHealth = m_fMaxHealth;
         m_StarPickupSound = GetComponent<AudioSource>();
         if (m_sHealthSlider != null)
@@ -32,10 +33,6 @@ public class Player_Manager_Script : MonoBehaviour
         m_GOPlayerController.InIt();
     }
 
-    /// <summary>
-    /// Initialise and reset the properties.
-    /// Make the Pickup available again.
-    /// </summary>
 	/// <returns>Current Health of the Player</returns>
     public float GetCurrentHealth()
     {
@@ -83,7 +80,7 @@ public class Player_Manager_Script : MonoBehaviour
         }
         else if (collider.gameObject.TryGetComponent<IHealthAffector>(out IHealthAffector healthAffector))
         {
-            ChangeHealth(healthAffector.AddedPlayerHealthValue());
+            ChangeHealth(healthAffector.ChangedPlayerHealthValue());
             Destroy(collider.gameObject);
         }
         else if (collider.gameObject.TryGetComponent<Finished_Area_Script>(out Finished_Area_Script finishedArea))

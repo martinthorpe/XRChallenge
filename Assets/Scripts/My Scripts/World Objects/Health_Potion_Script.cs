@@ -5,10 +5,10 @@ using UnityEngine;
 public class Health_Potion_Script : MonoBehaviour, IHealthAffector
 {
     [Header("Config")]
-    [SerializeField] private float m_fHealth;
+    [SerializeField, Range(0, 1000)] private float m_fHealth;
 
 	/// <returns>The amount of health the potion gives.</returns>
-    public float AddedPlayerHealthValue()
+    public float ChangedPlayerHealthValue()
     {
         return m_fHealth;
     }

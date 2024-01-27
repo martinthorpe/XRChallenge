@@ -9,13 +9,22 @@ public class MapManagerScript : MonoBehaviour
 {
     public event Action<List<GridSlotScript>> AddingGridSlots;
     public event Action<List<GridSlotScript>> RemovingGridSlots;
-    private List<RowManagerScript> m_ListOfRowManagers;
-    [SerializeField] private GameObject m_RowPrefab;
-    [SerializeField] private GameObject m_GridSlotPrefab;
     private int m_IRowLength;
 
+    [Header("References")]
+    [SerializeField] private GameObject m_RowPrefab;
+    [SerializeField] private GameObject m_GridSlotPrefab;
+    private List<RowManagerScript> m_ListOfRowManagers;
+
+    /// <summary>
+    /// Resets values.
+    /// Instantiates and adds row obejcts to row script to list.
+    /// Then passes map values to the correct row.
+	/// </summary>
     public void InIt(List<string> map, Sprite[] sprites)
     {
+        AddingGridSlots = null;
+        RemovingGridSlots = null;
         m_ListOfRowManagers = new List<RowManagerScript>();
         m_IRowLength = map[0].Length;
         for (int i = 0; i < map.Count; i++)
@@ -34,6 +43,11 @@ public class MapManagerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+	/// Makes a new grid slot script list.
+    /// This is used to hold the new grid slot script being added.
+    /// Then it is passed through an event.
+	/// </summary>
     public void AddColumn(Sprite floorSprite)
     {
         List<GridSlotScript> listOfGridSlotScript = new List<GridSlotScript>();
@@ -45,6 +59,11 @@ public class MapManagerScript : MonoBehaviour
         AddingGridSlots?.Invoke(listOfGridSlotScript);
     }
 
+    /// <summary>
+    /// Makes a new grid slot script list.
+    /// This is used to hold all the grid slot script being removed.
+    /// Then it is passed through an event.
+    /// </summary>
     public void RemoveColumn()
     {
         List<GridSlotScript> listOfGridSlotScript = new List<GridSlotScript>();
@@ -59,6 +78,12 @@ public class MapManagerScript : MonoBehaviour
         RemovingGridSlots?.Invoke(listOfGridSlotScript);
     }
 
+    /// <summary>
+    /// Makes a new grid slot script list.
+    /// A new row manager is added to the row list.
+    /// Then grid slots are instantiate and added to that row manager and the new grid slot script list.
+    /// Then that list is passed through an event.
+    /// </summary>
     public void AddRow(Sprite floorSprite)
     {
         List<GridSlotScript> listOfGridSlotScript = new List<GridSlotScript>();
@@ -71,6 +96,12 @@ public class MapManagerScript : MonoBehaviour
         AddingGridSlots?.Invoke(listOfGridSlotScript);
     }
 
+    /// <summary>
+    /// Makes a new grid slot script list.
+    /// All the grid slot script in the final row manager is added to that list.
+    /// Then that final row manager is removed from its list.
+    /// Finally the new grid slot script list is passed through an event.
+    /// </summary>
     public void RemoveRow()
     {
         List<GridSlotScript> listOfGridSlotScript = new List<GridSlotScript>();
@@ -88,6 +119,11 @@ public class MapManagerScript : MonoBehaviour
         RemovingGridSlots?.Invoke(listOfGridSlotScript);
     }
 
+    /// <summary>
+    /// Makes a new grid slot script list.
+    /// Goes through all row managers getting their grid slot scripts adding it to that new list.
+    /// </summary>
+    /// <returns>The list of grid slot scripts.</returns>
     public List<GridSlotScript> GetAllGridSlots()
     {
         List<GridSlotScript> listOfGridSlotScript = new List<GridSlotScript>();

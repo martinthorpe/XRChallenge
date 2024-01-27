@@ -9,10 +9,12 @@ public class Finished_Area_Script : MonoBehaviour
     public event Action EnteredArea;
 
     /// <summary>
+    /// Sets the event on this script to null.
     /// Calls the SetEnterable function with the value it was passed.
     /// </summary>
     public void InIt(bool b)
     {
+        EnteredArea = null;
         SetEnterable(b);
     }
 
